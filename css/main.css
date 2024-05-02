@@ -1,0 +1,11 @@
+body, html { height: 100%; margin: 0; font-family: Helvetica, sans-serif; display: flex; justify-content: center; align-items: center; background: #faf8ef; }
+.container {width: 320px;}
+p {font-size: 12px}
+#gameboard { width: 300px; height: 300px; display: grid; grid-template: repeat(3, 1fr) / repeat(3, 1fr); gap: 10px; padding: 10px; background: #bbada0; border-radius: 10px; margin-top: 10px}
+.cell { display: flex; align-items: center; justify-content: center; background: #cdc1b4; font-size: 40px; font-weight: bold; color: #faf8ef; border-radius: 5px; }
+.cell.× { background: #f67c5f; }
+.cell.o { background: #f2b179; }
+.fade { opacity: 0.5; }
+.beforegame {width: 320px; display: flex; justify-content: space-between; }
+button { background: #8f7a66; color: white; border: none; padding: 10px 20px; font-size: 16px; font-family: Helvetica, sans-serif; cursor: pointer; border-radius: 3px; }
+#victoryMessage { display: none; position: fixed; top: 50%; left: 50%; transform: translate(-50%, -50%); background: white; border: 2px solid #776e65; padding: 20px; border-radius: 10px; }

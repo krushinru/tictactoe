@@ -1,0 +1,26 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="user-scalable=no, width=device-width">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black">
+<title>Infinite Tic Tac Toe</title>
+
+<link href="css/main.css" rel="stylesheet">
+</head>
+<body>
+<div class="container">
+    <div class="beforegame">
+    <button onclick="initGame('pvp')">PVP</button>
+    <button onclick="initGame('pvc')">New Game</button>
+    </div>
+    <div id="gameboard"></div>
+    <div>
+        <p><strong>How to play: </strong>Infinite Tic-Tac-Toe! Only 3 marks can be put for each o and ×. When the 4th mark is made, the 1st one disappears.</p>
+    </div>
+    <div id="victoryMessage"></div>
+</div>
+<script src="js/game.js"></script>
+</body>
+</html>
