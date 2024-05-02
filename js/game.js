@@ -47,73 +47,106 @@ function togglePlayer() {
 }
 
 function findBestMove(grid, player) {
-    const opponent = player === 'o' ? '×' : 'o';
-    const winConditions = [
-        [0, 1, 2],
-        [3, 4, 5],
-        [6, 7, 8],
-        [0, 3, 6],
-        [1, 4, 7],
-        [2, 5, 8],
-        [0, 4, 8],
-        [2, 4, 6]
-    ];
+    let bestScore = -Infinity;
+    let move = null;
 
-    function isWinning(grid, player, [a, b, c]) {
-        return (
-            (grid[Math.floor(a/3)][a%3] === player && grid[Math.floor(b/3)][b%3] === player && grid[Math.floor(c/3)][c%3] === null) ||
-            (grid[Math.floor(a/3)][a%3] === player && grid[Math.floor(c/3)][c%3] === player && grid[Math.floor(b/3)][b%3] === null) ||
-            (grid[Math.floor(b/3)][b%3] === player && grid[Math.floor(c/3)][c%3] === player && grid[Math.floor(a/3)][a%3] === null)
-        );
-    }
+    for (let i = 0; i < 3; i++) {
+        for (let j = 0; j < 3; j++) {
+            // Check if the cell is empty
+            if (grid[i][j] === null) {
+                grid[i][j] = player; // Make the move
+                let score = minimax(grid, false, player); // Call minimax
+                grid[i][j] = null; // Undo the move
 
-    // Try to win or block the opponent from winning
-    for (let condition of winConditions) {
-        for (let playerCheck of [player, opponent]) {
-            for (let idx of condition) {
-                if (grid[Math.floor(idx/3)][idx%3] === null) {
-                    const tempGrid = grid.map(row => row.slice()); // Clone grid
-                    tempGrid[Math.floor(idx/3)][idx%3] = playerCheck;
-                    if (isWinning(tempGrid, playerCheck, condition)) {
-                        return { i: Math.floor(idx/3), j: idx%3 };
-                    }
+                if (score > bestScore) { // Choose the higher score move
+                    bestScore = score;
+                    move = { i, j };
                 }
             }
         }
     }
+    return move;
+}
 
-    // Play the center
-    if (grid[1][1] === null) {
-        return { i: 1, j: 1 };
+function minimax(grid, isMaximizing, player) {
+    const opponent = player === 'o' ? '×' : 'o';
+    const winner = checkWinner(grid);
+    
+    if (winner !== null) {
+        return scores[winner]; // Return the score from the scores object
     }
 
-    // Play an empty corner
-    const corners = [0, 2, 6, 8];
-    const emptyCorners = corners.filter(idx => grid[Math.floor(idx/3)][idx%3] === null);
-    if (emptyCorners.length > 0) {
-        const move = emptyCorners[Math.floor(Math.random() * emptyCorners.length)];
-        return { i: Math.floor(move/3), j: move%3 };
-    }
-
-    // Play an empty side
-    const sides = [1, 3, 5, 7];
-    const emptySides = sides.filter(idx => grid[Math.floor(idx/3)][idx%3] === null);
-    if (emptySides.length > 0) {
-        const move = emptySides[Math.floor(Math.random() * emptySides.length)];
-        return { i: Math.floor(move/3), j: move%3 };
-    }
-
-    // If all else fails, pick any empty space (shouldn't really get here in a normal game)
-    for (let i = 0; i < 3; i++) {
-        for (let j = 0; j < 3; j++) {
-            if (grid[i][j] === null) {
-                return { i, j };
+    if (isMaximizing) {
+        let bestScore = -Infinity;
+        for (let i = 0; i < 3; i++) {
+            for (let j = 0; j < 3; j++) {
+                if (grid[i][j] === null) {
+                    grid[i][j] = player;
+                    let score = minimax(grid, false, player);
+                    grid[i][j] = null;
+                    bestScore = Math.max(score, bestScore);
+                }
             }
+        }
+        return bestScore;
+    } else {
+        let bestScore = Infinity;
+        for (let i = 0; i < 3; i++) {
+            for (let j = 0; j < 3; j++) {
+                if (grid[i][j] === null) {
+                    grid[i][j] = opponent;
+                    let score = minimax(grid, true, player);
+                    grid[i][j] = null;
+                    bestScore = Math.min(score, bestScore);
+                }
+            }
+        }
+        return bestScore;
+    }
+}
+
+function checkWinner(grid) {
+    // Define possible winning combinations
+    const winConditions = [
+        [0, 1, 2], [3, 4, 5], [6, 7, 8],  // Rows
+        [0, 3, 6], [1, 4, 7], [2, 5, 8],  // Columns
+        [0, 4, 8], [2, 4, 6]              // Diagonals
+    ];
+
+    for (let condition of winConditions) {
+        const [a, b, c] = condition;
+        const first = grid[Math.floor(a / 3)][a % 3];
+        const second = grid[Math.floor(b / 3)][b % 3];
+        const third = grid[Math.floor(c / 3)][c % 3];
+
+        // Check if the cells are non-null and match
+        if (first !== null && first === second && first === third) {
+            return first;  // Return the winner ('o' or '×')
         }
     }
 
-    return null; // No move found
+    // Check for a draw by verifying there are no empty cells left
+    let isDraw = true;
+    for (let row of grid) {
+        for (let cell of row) {
+            if (cell === null) {
+                isDraw = false;
+                break;
+            }
+        }
+        if (!isDraw) break;
+    }
+
+    if (isDraw) {
+        return 'draw';  // Return 'draw' if the board is full and there's no winner
+    }
+
+    return null;  // Return null if the game should continue
 }
+
+
+const scores = { 'o': 1, '×': -1, 'draw': 0 }; // Adjust scores as per the perspective (AI is 'o')
+
 
 
 function computerMove() {
