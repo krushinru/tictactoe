@@ -18,7 +18,7 @@ function updateBoard() {
             const cellElem = document.createElement('div');
             cellElem.className = 'cell ' + (cell || '');
             cellElem.textContent = cell || '';
-            if (cell && moveOrder.slice(-6, -5).includes(`${i}${j}`)) cellElem.classList.add('fade');
+            if (cell && moveOrder.slice(-6, -4).includes(`${i}${j}`)) cellElem.classList.add('fade');
             cellElem.addEventListener('click', () => makeMove(i, j));
             board.appendChild(cellElem);
         });
